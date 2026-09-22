@@ -84,27 +84,67 @@ map("n", "<leader>nc", function()
 end, { desc = "Copy all logs/notifications to clipboard" })
 
 -- 10. Fast Compile & Run Current File (<leader>r)
+local runner_term = nil
 map("n", "<leader>r", function()
-  vim.cmd("w") -- Auto-save first
-  local ft = vim.bo.filetype
-  local file = vim.fn.expand("%")
-  local output = vim.fn.expand("%:r")
+  -- 1. Auto-save if buffer is modified or has a filename
+  if vim.bo.modified or vim.fn.empty(vim.fn.expand("%")) == 0 then
+    vim.cmd("silent! write")
+  end
 
+  local ft = vim.bo.filetype
+  local file = vim.fn.expand("%:p")
+  local dir = vim.fn.expand("%:p:h")
+  local filename = vim.fn.expand("%:t")
+  local output = vim.fn.expand("%:p:r")
+
+  if file == "" then
+    vim.notify("⚠️ Save file first before running!", vim.log.levels.WARN)
+    return
+  end
+
+  local run_cmd = nil
   if ft == "c" then
-    Snacks.terminal("clang -Wall -O2 " .. file .. " -o " .. output .. " && ./" .. output .. "; echo '\n--- Finished (Press Enter) ---'; read")
+    run_cmd = string.format("clang -Wall -Wextra -O2 -g %q -o %q -lm && %q", file, output, output)
   elseif ft == "cpp" then
-    Snacks.terminal("clang++ -Wall -O2 -std=c++20 " .. file .. " -o " .. output .. " && ./" .. output .. "; echo '\n--- Finished (Press Enter) ---'; read")
-  elseif ft == "java" then
-    Snacks.terminal("javac " .. file .. " && java " .. output .. "; echo '\n--- Finished (Press Enter) ---'; read")
+    run_cmd = string.format("clang++ -Wall -Wextra -O2 -g -std=c++20 %q -o %q && %q", file, output, output)
+  elseif ft == "rust" then
+    run_cmd = string.format("rustc %q -o %q && %q", file, output, output)
   elseif ft == "python" then
-    Snacks.terminal("python3 " .. file .. "; echo '\n--- Finished (Press Enter) ---'; read")
+    run_cmd = string.format("python3 %q", file)
   elseif ft == "javascript" then
-    Snacks.terminal("node " .. file .. "; echo '\n--- Finished (Press Enter) ---'; read")
+    run_cmd = string.format("node %q", file)
   elseif ft == "typescript" then
-    Snacks.terminal("npx tsx " .. file .. "; echo '\n--- Finished (Press Enter) ---'; read")
+    run_cmd = string.format("npx tsx %q", file)
   elseif ft == "sh" or ft == "bash" then
-    Snacks.terminal("bash " .. file .. "; echo '\n--- Finished (Press Enter) ---'; read")
+    run_cmd = string.format("bash %q", file)
+  elseif ft == "java" then
+    run_cmd = string.format("javac %q && java -cp %q %q", file, dir, vim.fn.expand("%:t:r"))
   else
     vim.notify("⚠️ No run command defined for filetype: " .. ft, vim.log.levels.WARN)
+    return
   end
-end, { desc = "Compile & Run current file" })
+
+  -- Wrap command to display exit status and pause so output is visible
+  local full_cmd = string.format(
+    "cd %q && echo '⚡ Compiling & Running %s...' && %s; echo ''; echo '════════════════════════════════════════'; echo 'Finished with exit code '$?'. Press Enter to close...'; read",
+    dir,
+    filename,
+    run_cmd
+  )
+
+  -- Close prior runner terminal if open
+  if runner_term and runner_term:buf_valid() then
+    runner_term:close()
+  end
+
+  runner_term = Snacks.terminal.open(full_cmd, {
+    win = {
+      position = "bottom",
+      height = 0.38,
+      border = "rounded",
+      title = " 🚀 Run: " .. filename .. " ",
+      title_pos = "center",
+    },
+    interactive = true,
+  })
+end, { desc = "Save, Compile & Run current file" })

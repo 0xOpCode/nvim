@@ -61,8 +61,10 @@ High-performance, pure OLED high-contrast, modular Neovim setup tuned for instan
 | `<leader>cr` | Rename symbol across project |
 | `<leader>cf` | Format current file (Conform) |
 | `<leader>cd` | Show line diagnostics float |
+| `<leader>ch` / `<A-o>` | Switch between C/C++ Header & Source (`.h` ↔ `.cpp`) |
+| `<leader>ci` | Toggle LSP Inlay Hints (parameter names, types) |
 | `[d` / `]d` | Previous / Next diagnostic |
-| `<leader>r` | **Compile & Run current file** (C, C++, Python, JS/TS, Bash) |
+| `<leader>r` | **Save, Compile & Run current file** (C, C++, Python, JS/TS, Bash) |
 | `<leader>nc` | **Copy all notifications & messages** to clipboard |
 
 ### 🐙 Git & Terminal

@@ -84,6 +84,18 @@ return {
           map("<leader>cr", vim.lsp.buf.rename, "Code Rename Across Project")
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
           map("<leader>cs", vim.lsp.buf.signature_help, "Signature Help")
+
+          -- C/C++ Header / Source Switch (<leader>ch or Alt+o)
+          map("<leader>ch", "<cmd>ClangdSwitchSourceHeader<CR>", "Switch C/C++ Source/Header")
+          map("<A-o>", "<cmd>ClangdSwitchSourceHeader<CR>", "Switch C/C++ Source/Header")
+
+          -- Toggle Inlay Hints (<leader>ci)
+          if vim.lsp.inlay_hint then
+            pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+            map("<leader>ci", function()
+              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+            end, "Toggle Inlay Hints")
+          end
         end,
       })
 
@@ -115,6 +127,13 @@ return {
             "--completion-style=detailed",
             "--function-arg-placeholders",
             "--fallback-style=llvm",
+            "--all-scopes-completion",
+            "--header-insertion-decorators",
+          },
+          init_options = {
+            usePlaceholders = true,
+            completeUnimported = true,
+            clangdFileStatus = true,
           },
         },
         bashls = {
