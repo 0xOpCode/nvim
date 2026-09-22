@@ -4,9 +4,9 @@
 
 local opt = vim.opt
 
--- Line Numbers
+-- Line Numbers (Standard absolute numbering like VS Code)
 opt.number = true
-opt.relativenumber = true
+opt.relativenumber = false
 
 -- Tabs & Indentation (Modern standard: 2 spaces)
 opt.tabstop = 2

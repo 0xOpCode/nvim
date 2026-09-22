@@ -64,9 +64,12 @@ return {
       { "<leader>gf", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
       { "<leader>gb", function() Snacks.git.blame_line() end, desc = "Git Blame Current Line" },
 
-      -- 4. Floating Terminal
-      { "<leader>tt", function() Snacks.terminal() end, desc = "Toggle Floating Terminal" },
-      { "<C-\\>", function() Snacks.terminal() end, mode = { "n", "t" }, desc = "Toggle Terminal" },
+      -- 4. Terminal (VS Code Ctrl+~ / Ctrl+` / Ctrl+J toggle)
+      { "<leader>tt", function() Snacks.terminal() end, desc = "Toggle Terminal" },
+      { "<C-\\>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal" },
+      { "<C-`>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal (VS Code style)" },
+      { "<C-~>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal (VS Code style)" },
+      { "<C-j>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal (VS Code Ctrl+J)" },
 
       -- 5. Notifications History & Dismiss
       { "<leader>nh", function() Snacks.notifier.show_history() end, desc = "Notification History" },

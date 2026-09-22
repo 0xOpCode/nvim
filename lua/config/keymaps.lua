@@ -75,9 +75,13 @@ map("n", "<S-l>", "<cmd>bnext<CR>", { desc = "Next Buffer Tab" })
 map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Close Current Buffer" })
 map("n", "<leader>ba", "<cmd>%bd|e#|bd#<CR>", { desc = "Close Other Buffers" })
 
--- 3. Seamless Window Split Navigation (Ctrl + h/j/k/l)
+-- 3. Terminal Toggle (VS Code Ctrl+~ / Ctrl+` / Ctrl+J hide/unhide)
+map({ "n", "t", "i" }, "<C-`>", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
+map({ "n", "t", "i" }, "<C-~>", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
+map({ "n", "t", "i" }, "<C-j>", function() Snacks.terminal() end, { desc = "Toggle Terminal (VS Code Ctrl+J)" })
+
+-- Window Split Navigation
 map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
 map("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
 map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
