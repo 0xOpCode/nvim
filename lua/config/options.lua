@@ -53,3 +53,20 @@ opt.completeopt = { "menu", "menuone", "noselect" }
 -- Disable unused providers to avoid warning logs
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
+
+-- Global C-style Indentation (p0 prevents indentation after function declarations / parentheses)
+opt.cinoptions = "g0,:0,N-s,(0,W4,m1,j1,{0,f0,t0,p0"
+
+-- C & C++ Specific Indentation & Format Rules
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "c", "cpp", "objc", "objcpp" },
+  callback = function()
+    vim.opt_local.cindent = true
+    vim.opt_local.smartindent = false
+    vim.opt_local.cinoptions = "g0,:0,N-s,(0,W4,m1,j1,{0,f0,t0,p0"
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.softtabstop = 4
+    vim.opt_local.expandtab = true
+  end,
+})

@@ -20,5 +20,6 @@ vim.opt_local.cindent = true
 -- {0: place opening brace at column 0 in Allman style
 -- f0: place function opening brace at column 0
 -- t0: do not indent function return type
-vim.opt_local.cinoptions = "g0,:0,N-s,(0,W4,m1,j1,{0,f0,t0"
+-- p0: do not indent after function declarations / parentheses (K&R parameter indent off)
+vim.opt_local.cinoptions = "g0,:0,N-s,(0,W4,m1,j1,{0,f0,t0,p0"
 vim.opt_local.commentstring = "// %s"
