@@ -28,6 +28,15 @@ High-performance, pure OLED high-contrast, modular Neovim setup tuned for instan
 
 ## ⌨️ Essential Keymaps (`<leader>` = `Space`)
 
+### ⚡ VS Code Familiar Shortcuts
+| Key | Action |
+| --- | --- |
+| `<C-s>` / `<leader>w` | Save and auto-format file |
+| `<C-z>` | Undo (Normal, Insert, Visual) |
+| `<C-y>` / `<C-S-z>` | Redo (Normal, Insert, Visual) |
+| `<C-Enter>` / `<C-CR>` | Insert new line below |
+| `<C-S-Enter>` / `<C-S-CR>` | Insert new line above |
+
 ### 📁 Files, Buffers & Explorer
 | Key | Action |
 | --- | --- |

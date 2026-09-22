@@ -8,12 +8,36 @@ local map = vim.keymap.set
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- 1. General Helpers
+-- 1. General Helpers & VS Code Ergonomics
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
 map({ "n", "i", "v" }, "<C-s>", "<cmd>w<CR>", { desc = "Save and format file" })
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save and format file" })
 map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit window" })
 map("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Force quit all" })
+
+-- VS Code Undo / Redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
+map("n", "<C-z>", "u", { desc = "Undo" })
+map("i", "<C-z>", "<C-o>u", { desc = "Undo" })
+map("v", "<C-z>", "<Esc>u", { desc = "Undo" })
+
+map("n", "<C-y>", "<C-r>", { desc = "Redo" })
+map("i", "<C-y>", "<C-o><C-r>", { desc = "Redo" })
+map("v", "<C-y>", "<Esc><C-r>", { desc = "Redo" })
+
+map("n", "<C-S-z>", "<C-r>", { desc = "Redo" })
+map("i", "<C-S-z>", "<C-o><C-r>", { desc = "Redo" })
+map("v", "<C-S-z>", "<Esc><C-r>", { desc = "Redo" })
+
+-- VS Code New Line Below (Ctrl+Enter) & Above (Ctrl+Shift+Enter)
+map({ "n", "v" }, "<C-CR>", "o", { desc = "Insert line below" })
+map("i", "<C-CR>", "<C-o>o", { desc = "Insert line below" })
+map({ "n", "v" }, "<C-Enter>", "o", { desc = "Insert line below" })
+map("i", "<C-Enter>", "<C-o>o", { desc = "Insert line below" })
+
+map({ "n", "v" }, "<C-S-CR>", "O", { desc = "Insert line above" })
+map("i", "<C-S-CR>", "<C-o>O", { desc = "Insert line above" })
+map({ "n", "v" }, "<C-S-Enter>", "O", { desc = "Insert line above" })
+map("i", "<C-S-Enter>", "<C-o>O", { desc = "Insert line above" })
 
 -- 2. Buffer Controls & Switching
 map("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "Previous Buffer Tab" })
@@ -87,9 +111,12 @@ end, { desc = "Copy all logs/notifications to clipboard" })
 -- 10. Fast Compile & Run Current File (<leader>r)
 local runner_term = nil
 map("n", "<leader>r", function()
-  -- 1. Auto-save if buffer is modified (noautocmd avoids triggering formatter during run)
+  -- 1. Format and Auto-save before compile & run
   if vim.bo.modified or vim.fn.empty(vim.fn.expand("%")) == 0 then
-    vim.cmd("noautocmd silent! write")
+    pcall(function()
+      require("conform").format({ async = false, lsp_fallback = true })
+    end)
+    vim.cmd("silent! write")
   end
 
   local ft = vim.bo.filetype
