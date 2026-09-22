@@ -1,0 +1,5 @@
+# Neovim swap, backup, undo files
+*.swp
+*.swo
+*~
+.netrwhist
