@@ -30,6 +30,9 @@ opt.sidescrolloff = 8
 opt.mouse = "a" -- Full mouse support (click tabs, scroll, select text)
 opt.clipboard = "unnamedplus" -- System clipboard sync (wl-clipboard on Wayland)
 
+-- Cursor Line Wrapping (Left arrow at start of line wraps to previous line, Right arrow at end wraps to next line)
+opt.whichwrap = "b,s,<,>,[,],h,l"
+
 -- Search & Patterns
 opt.ignorecase = true
 opt.smartcase = true

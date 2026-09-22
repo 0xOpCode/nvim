@@ -39,8 +39,10 @@ map("i", "<C-S-CR>", "<C-o>O", { desc = "Insert line above" })
 map({ "n", "v" }, "<C-S-Enter>", "O", { desc = "Insert line above" })
 map("i", "<C-S-Enter>", "<C-o>O", { desc = "Insert line above" })
 
--- VS Code Ctrl+D (Select word under cursor)
+-- VS Code Ctrl+D (Select word under cursor in Normal, Insert, and Visual modes)
 map("n", "<C-d>", "viw", { desc = "Select word under cursor" })
+map("i", "<C-d>", "<Esc>viw", { desc = "Select word under cursor" })
+map("x", "<C-d>", [["yy/<C-r>y<CR>gn]], { desc = "Select next occurrence" })
 
 -- Visual mode Auto-Surround (Wrap selection in brackets or quotes - VS Code style)
 local function visual_wrap(open_char, close_char)
