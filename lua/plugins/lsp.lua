@@ -89,9 +89,9 @@ return {
           map("<leader>ch", "<cmd>ClangdSwitchSourceHeader<CR>", "Switch C/C++ Source/Header")
           map("<A-o>", "<cmd>ClangdSwitchSourceHeader<CR>", "Switch C/C++ Source/Header")
 
-          -- Toggle Inlay Hints (<leader>ci)
+          -- Toggle Inlay Hints (Default: OFF to avoid "format:" parameter clutter)
           if vim.lsp.inlay_hint then
-            pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+            pcall(vim.lsp.inlay_hint.enable, false, { bufnr = bufnr })
             map("<leader>ci", function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
             end, "Toggle Inlay Hints")

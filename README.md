@@ -36,6 +36,8 @@ High-performance, pure OLED high-contrast, modular Neovim setup tuned for instan
 | `<C-y>` / `<C-S-z>` | Redo (Normal, Insert, Visual) |
 | `<C-Enter>` / `<C-CR>` | Insert new line below |
 | `<C-S-Enter>` / `<C-S-CR>` | Insert new line above |
+| `<C-d>` | Select word under cursor |
+| `(`, `[`, `{`, `"`, `'`, ``` ` ``` (Visual) | Wrap selected text in brackets / quotes |
 
 ### 📁 Files, Buffers & Explorer
 | Key | Action |

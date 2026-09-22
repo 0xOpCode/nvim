@@ -39,6 +39,36 @@ map("i", "<C-S-CR>", "<C-o>O", { desc = "Insert line above" })
 map({ "n", "v" }, "<C-S-Enter>", "O", { desc = "Insert line above" })
 map("i", "<C-S-Enter>", "<C-o>O", { desc = "Insert line above" })
 
+-- VS Code Ctrl+D (Select word under cursor)
+map("n", "<C-d>", "viw", { desc = "Select word under cursor" })
+
+-- Visual mode Auto-Surround (Wrap selection in brackets or quotes - VS Code style)
+local function visual_wrap(open_char, close_char)
+  return function()
+    local s = vim.fn.getreg("s")
+    local st = vim.fn.getregtype("s")
+    vim.cmd('normal! "sd')
+    local sel = vim.fn.getreg("s")
+    vim.api.nvim_paste(open_char .. sel .. close_char, false, -1)
+    vim.fn.setreg("s", s, st)
+  end
+end
+
+for _, pair in ipairs({
+  { "(", ")" },
+  { "[", "]" },
+  { "{", "}" },
+  { '"', '"' },
+  { "'", "'" },
+  { "`", "`" },
+}) do
+  local open_c, close_c = pair[1], pair[2]
+  map("x", open_c, visual_wrap(open_c, close_c), { desc = "Wrap selection in " .. open_c .. close_c })
+  if open_c ~= close_c then
+    map("x", close_c, visual_wrap(open_c, close_c), { desc = "Wrap selection in " .. open_c .. close_c })
+  end
+end
+
 -- 2. Buffer Controls & Switching
 map("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "Previous Buffer Tab" })
 map("n", "<S-l>", "<cmd>bnext<CR>", { desc = "Next Buffer Tab" })
@@ -167,8 +197,9 @@ map("n", "<leader>r", function()
 
   runner_term = Snacks.terminal.open(full_cmd, {
     win = {
-      position = "bottom",
-      height = 0.38,
+      position = "float",
+      width = 0.98,
+      height = 0.98,
       border = "rounded",
       title = " 🚀 Run: " .. filename .. " ",
       title_pos = "center",
