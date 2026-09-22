@@ -37,6 +37,7 @@ return {
       },
       indent = {
         enable = true,
+        disable = { "c", "cpp" },
       },
     },
     config = function(_, opts)

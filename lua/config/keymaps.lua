@@ -10,7 +10,8 @@ vim.g.maplocalleader = " "
 
 -- 1. General Helpers
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
-map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save file" })
+map({ "n", "i", "v" }, "<C-s>", "<cmd>w<CR>", { desc = "Save and format file" })
+map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save and format file" })
 map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit window" })
 map("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Force quit all" })
 
@@ -86,9 +87,9 @@ end, { desc = "Copy all logs/notifications to clipboard" })
 -- 10. Fast Compile & Run Current File (<leader>r)
 local runner_term = nil
 map("n", "<leader>r", function()
-  -- 1. Auto-save if buffer is modified or has a filename
+  -- 1. Auto-save if buffer is modified (noautocmd avoids triggering formatter during run)
   if vim.bo.modified or vim.fn.empty(vim.fn.expand("%")) == 0 then
-    vim.cmd("silent! write")
+    vim.cmd("noautocmd silent! write")
   end
 
   local ft = vim.bo.filetype
