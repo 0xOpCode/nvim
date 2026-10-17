@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 💡 LANGUAGE SERVER PROTOCOL (LSP), MASON & AUTO-FORMATTING
+-- LANGUAGE SERVER PROTOCOL (LSP), MASON & AUTO-FORMATTING
 -- ==============================================================================
 
 return {
@@ -20,7 +20,7 @@ return {
     },
   },
 
-  -- 2. Mason LSP Bridge (v1.31.0 - Neovim 0.10.x compatible)
+  -- 2. Mason LSP Bridge
   {
     "williamboman/mason-lspconfig.nvim",
     tag = "v1.31.0",
@@ -42,10 +42,8 @@ return {
       "saghen/blink.cmp",
     },
     config = function()
-      local lspconfig = require("lspconfig")
       local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-      -- Global diagnostic borders and icons
       vim.diagnostic.config({
         virtual_text = {
           prefix = "●",
@@ -65,7 +63,6 @@ return {
         },
       })
 
-      -- Keymaps via LspAttach (clean modern style, works on 0.10+)
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true }),
         callback = function(event)
@@ -85,11 +82,10 @@ return {
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
           map("<leader>cs", vim.lsp.buf.signature_help, "Signature Help")
 
-          -- C/C++ Header / Source Switch (<leader>ch or Alt+o)
+          -- C/C++ Header / Source Switch (<leader>ch)
           map("<leader>ch", "<cmd>ClangdSwitchSourceHeader<CR>", "Switch C/C++ Source/Header")
-          map("<A-o>", "<cmd>ClangdSwitchSourceHeader<CR>", "Switch C/C++ Source/Header")
 
-          -- Toggle Inlay Hints (Default: OFF to avoid "format:" parameter clutter)
+          -- Toggle Inlay Hints (Default: OFF to avoid parameter clutter)
           if vim.lsp.inlay_hint then
             pcall(vim.lsp.inlay_hint.enable, false, { bufnr = bufnr })
             map("<leader>ci", function()
@@ -115,7 +111,6 @@ return {
         offsetEncoding = { "utf-16" },
       })
 
-      -- Core active servers configured directly for reliable startup
       local servers = {
         clangd = {
           capabilities = clangd_capabilities,
@@ -154,13 +149,26 @@ return {
         },
       }
 
+      local use_native_lsp = vim.fn.has("nvim-0.11") == 1
+        and (type(vim.lsp.config) == "table" or type(vim.lsp.config) == "function")
+        and type(vim.lsp.enable) == "function"
+
       for server, opts in pairs(servers) do
-        lspconfig[server].setup(opts)
+        if use_native_lsp then
+          if type(vim.lsp.config) == "function" or (getmetatable(vim.lsp.config) and getmetatable(vim.lsp.config).__call) then
+            vim.lsp.config(server, opts)
+          else
+            vim.lsp.config[server] = opts
+          end
+          vim.lsp.enable(server)
+        else
+          require("lspconfig")[server].setup(opts)
+        end
       end
     end,
   },
 
-  -- 4. Fast Auto-Formatting on Save (Conform.nvim)
+  -- 4. Auto-Formatting on Save (Conform.nvim)
   {
     "stevearc/conform.nvim",
     event = { "BufWritePre" },
@@ -188,6 +196,13 @@ return {
         bash = { "shfmt" },
         c = { "clang-format" },
         cpp = { "clang-format" },
+      },
+      formatters = {
+        ["clang-format"] = {
+          prepend_args = {
+            "--style={BasedOnStyle: LLVM, BreakBeforeBraces: Allman, IndentWidth: 4}",
+          },
+        },
       },
       format_on_save = {
         timeout_ms = 1000,

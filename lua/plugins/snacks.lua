@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 🚀 SNACKS.NVIM (DASHBOARD, PICKERS, EXPLORER, TERMINAL, NOTIFIER)
+-- SNACKS.NVIM (DASHBOARD, PICKERS, EXPLORER, TERMINAL, NOTIFIER)
 -- ==============================================================================
 
 return {
@@ -13,13 +13,21 @@ return {
         enabled = true,
         preset = {
           header = [[
-   ██████╗  █████╗ ███████╗███╗   ███╗ ██████╗ ███╗   ██╗     ██████╗ ███████╗
-   ██╔══██╗██╔══██╗██╔════╝████╗ ████║██╔═══██╗████╗  ██║    ██╔═══██╗██╔════╝
-   ██║  ██║███████║█████╗  ██╔████╔██║██║   ██║██╔██╗ ██║    ██║   ██║███████╗
-   ██║  ██║██╔══██║██╔══╝  ██║╚██╔╝██║██║   ██║██║╚██╗██║    ██║   ██║╚════██║
-   ██████╔╝██║  ██║███████╗██║ ╚═╝ ██║╚██████╔╝██║ ╚████║    ╚██████╔╝███████║
-   ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝     ╚═════╝ ╚══════╝
-                     ⚡ ULTRA FAST OLED NEURON IDE ⚡]],
+   ██████╗ ██╗   ██╗████████╗███████╗ ██████╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗
+   ██╔══██╗╚██╗ ██╔╝╚══██╔══╝██╔════╝██╔════╝    ██╔════╝╚══██╔══╝██║   ██║██╔═██╗██║██╔═══██╗
+   ██████╔╝ ╚████╔╝    ██║   █████╗  ██║         ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║
+   ██╔══██╗  ╚██╔╝     ██║   ██╔══╝  ██║         ╚════██║   ██║   ██║   ██║██║  ██║██║██║   ██║
+   ██████╔╝   ██║      ██║   ███████╗╚██████╗    ███████║   ██║   ╚██████╔╝██████╔╝██║╚██████╔╝
+   ╚═════╝    ╚═╝      ╚═╝   ╚══════╝ ╚═════╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝
+                          BYTEC STUDIO v2.0 - POCKET C & C++ IDE]],
+          keys = {
+            { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+            { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            { icon = " ", key = "t", desc = "Open Terminal", action = function() Snacks.terminal() end },
+            { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+          },
         },
         sections = {
           { section = "header" },
@@ -64,12 +72,12 @@ return {
       { "<leader>gf", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
       { "<leader>gb", function() Snacks.git.blame_line() end, desc = "Git Blame Current Line" },
 
-      -- 4. Terminal (VS Code Ctrl+~ / Ctrl+` / Ctrl+J toggle)
-      { "<leader>tt", function() Snacks.terminal() end, desc = "Toggle Terminal" },
+      -- 4. Terminal Toggle
+      { "<leader>tt", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal" },
       { "<C-\\>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal" },
-      { "<C-`>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal (VS Code style)" },
-      { "<C-~>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal (VS Code style)" },
-      { "<C-j>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal (VS Code Ctrl+J)" },
+      { "<C-`>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal" },
+      { "<C-~>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal" },
+      { "<C-j>", function() Snacks.terminal() end, mode = { "n", "t", "i" }, desc = "Toggle Terminal" },
 
       -- 5. Notifications History & Dismiss
       { "<leader>nh", function() Snacks.notifier.show_history() end, desc = "Notification History" },
