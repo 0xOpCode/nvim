@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 🌲 TREESITTER SYNTAX HIGHLIGHTING & RAINBOW DELIMITERS
+-- TREESITTER SYNTAX HIGHLIGHTING & RAINBOW DELIMITERS
 -- ==============================================================================
 
 return {
@@ -12,23 +12,13 @@ return {
         "bash",
         "c",
         "cpp",
-        "css",
-        "diff",
-        "html",
-        "javascript",
         "json",
         "lua",
-        "luadoc",
         "markdown",
         "markdown_inline",
         "python",
-        "query",
-        "regex",
-        "toml",
-        "typescript",
         "vim",
         "vimdoc",
-        "yaml",
       },
       auto_install = true,
       highlight = {
@@ -41,7 +31,6 @@ return {
       },
     },
     config = function(_, opts)
-      -- Compatibility shim for both modern (config) and legacy (configs) module APIs
       local ok, ts = pcall(require, "nvim-treesitter.configs")
       if not ok then
         ts = require("nvim-treesitter.config")

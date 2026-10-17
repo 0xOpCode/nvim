@@ -1,21 +1,20 @@
 -- ==============================================================================
--- 🎮 CORE KEYMAPS & SHORTCUTS (LEADER: SPACE)
+-- CORE KEYMAPS & SHORTCUTS (LEADER: SPACE)
 -- ==============================================================================
 
 local map = vim.keymap.set
 
--- Set Leader Key to Space
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- 1. General Helpers & VS Code Ergonomics
+-- 1. General Helpers & VS Code Shortcuts
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
-map({ "n", "i", "v" }, "<C-s>", "<cmd>w<CR>", { desc = "Save and format file" })
-map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save and format file" })
+map({ "n", "i", "v" }, "<C-s>", "<cmd>w<CR>", { desc = "Save and format buffer" })
+map("n", "<leader>w", "<cmd>w<CR>", { desc = "Save and format buffer" })
 map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit window" })
 map("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Force quit all" })
 
--- VS Code Undo / Redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
+-- Undo / Redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
 map("n", "<C-z>", "u", { desc = "Undo" })
 map("i", "<C-z>", "<C-o>u", { desc = "Undo" })
 map("v", "<C-z>", "<Esc>u", { desc = "Undo" })
@@ -28,31 +27,108 @@ map("n", "<C-S-z>", "<C-r>", { desc = "Redo" })
 map("i", "<C-S-z>", "<C-o><C-r>", { desc = "Redo" })
 map("v", "<C-S-z>", "<Esc><C-r>", { desc = "Redo" })
 
--- VS Code New Line Below (Ctrl+Enter) & Above (Ctrl+Shift+Enter)
+-- System Clipboard Copy / Cut / Paste (Ctrl+C, Ctrl+X, Ctrl+V)
+map("x", "<C-c>", function()
+  vim.cmd('normal! "+y')
+  vim.notify("Copied selection to clipboard", vim.log.levels.INFO)
+end, { desc = "Copy selection to clipboard" })
+
+map({ "n", "i" }, "<C-c>", function()
+  vim.cmd('normal! "+yy')
+  vim.notify("Copied line to clipboard", vim.log.levels.INFO)
+end, { desc = "Copy line to clipboard" })
+
+map("x", "<C-x>", '"+d', { desc = "Cut selection to clipboard" })
+map("n", "<C-x>", '"+dd', { desc = "Cut line to clipboard" })
+
+map("n", "<C-v>", '"+p', { desc = "Paste from clipboard" })
+map("i", "<C-v>", "<C-r>+", { desc = "Paste from clipboard" })
+map("x", "<C-v>", '"+d"+P', { desc = "Paste over selection from clipboard" })
+map("n", "<A-v>", "<C-v>", { desc = "Visual Block mode" })
+
+-- Select All (Ctrl+A) and Number Increment (Alt+A)
+map({ "n", "i", "v" }, "<C-a>", "<Esc>ggVG", { desc = "Select entire buffer" })
+map("n", "<A-a>", "<C-a>", { desc = "Increment number" })
+
+-- Toggle Comment (Ctrl+/ and Ctrl+_)
+map("n", "<C-/>", "gcc", { remap = true, desc = "Toggle line comment" })
+map("i", "<C-/>", "<C-o>gcc", { remap = true, desc = "Toggle line comment" })
+map("v", "<C-/>", "gc", { remap = true, desc = "Toggle selection comment" })
+map("n", "<C-_>", "gcc", { remap = true, desc = "Toggle line comment" })
+map("i", "<C-_>", "<C-o>gcc", { remap = true, desc = "Toggle line comment" })
+map("v", "<C-_>", "gc", { remap = true, desc = "Toggle selection comment" })
+
+-- Search in Current Buffer (Ctrl+F)
+map("n", "<C-f>", function()
+  if _G.Snacks and Snacks.picker and Snacks.picker.lines then
+    Snacks.picker.lines()
+  else
+    vim.api.nvim_feedkeys("/", "n", false)
+  end
+end, { desc = "Search in current buffer" })
+
+map("i", "<C-f>", function()
+  vim.cmd("stopinsert")
+  if _G.Snacks and Snacks.picker and Snacks.picker.lines then
+    Snacks.picker.lines()
+  else
+    vim.api.nvim_feedkeys("/", "n", false)
+  end
+end, { desc = "Search in current buffer" })
+
+-- New Line Below (Ctrl+Enter, Alt+o, Space+o) & Above (Ctrl+Shift+Enter, Alt+O, Space+O)
 map({ "n", "v" }, "<C-CR>", "o", { desc = "Insert line below" })
 map("i", "<C-CR>", "<C-o>o", { desc = "Insert line below" })
 map({ "n", "v" }, "<C-Enter>", "o", { desc = "Insert line below" })
 map("i", "<C-Enter>", "<C-o>o", { desc = "Insert line below" })
+map({ "n", "v" }, "<A-o>", "o", { desc = "Insert line below" })
+map("i", "<A-o>", "<C-o>o", { desc = "Insert line below" })
+map("n", "<leader>o", "o", { desc = "Insert line below" })
 
 map({ "n", "v" }, "<C-S-CR>", "O", { desc = "Insert line above" })
 map("i", "<C-S-CR>", "<C-o>O", { desc = "Insert line above" })
 map({ "n", "v" }, "<C-S-Enter>", "O", { desc = "Insert line above" })
 map("i", "<C-S-Enter>", "<C-o>O", { desc = "Insert line above" })
+map({ "n", "v" }, "<A-O>", "O", { desc = "Insert line above" })
+map("i", "<A-O>", "<C-o>O", { desc = "Insert line above" })
+map("n", "<leader>O", "O", { desc = "Insert line above" })
 
--- VS Code Ctrl+D (Select word under cursor in Normal, Insert, and Visual modes)
+-- Word Selection & Next Occurrence (Ctrl+D)
 map("n", "<C-d>", "viw", { desc = "Select word under cursor" })
-map("i", "<C-d>", "<Esc>viw", { desc = "Select word under cursor" })
-map("x", "<C-d>", [["yy/<C-r>y<CR>gn]], { desc = "Select next occurrence" })
+map("i", "<C-d>", "<C-o>viw", { desc = "Select word under cursor" })
+map("x", "<C-d>", function()
+  local save_s = vim.fn.getreg("s")
+  local save_st = vim.fn.getregtype("s")
+  vim.cmd('normal! "sy')
+  local text = vim.fn.getreg("s")
+  vim.fn.setreg("s", save_s, save_st)
+  local escaped = vim.fn.escape(text, [[/\]]):gsub("\n", [[\n]])
+  local keys = vim.api.nvim_replace_termcodes("/\\V" .. escaped .. "<CR>gn", true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
+end, { desc = "Select next occurrence" })
 
--- Visual mode Auto-Surround (Wrap selection in brackets or quotes - VS Code style)
+-- Visual Auto-Surround (Characterwise and Linewise)
 local function visual_wrap(open_char, close_char)
   return function()
     local s = vim.fn.getreg("s")
     local st = vim.fn.getregtype("s")
-    vim.cmd('normal! "sd')
+    local u = vim.fn.getreg('"')
+    local ut = vim.fn.getregtype('"')
+    local mode = vim.fn.mode()
+    vim.cmd('normal! "sy')
     local sel = vim.fn.getreg("s")
-    vim.api.nvim_paste(open_char .. sel .. close_char, false, -1)
+    if mode == "V" then
+      sel = sel:gsub("\n$", "")
+      local lines = vim.split(open_char .. sel .. close_char, "\n", { plain = true })
+      local start_line = vim.fn.line("'<") - 1
+      local end_line = vim.fn.line("'>")
+      vim.api.nvim_buf_set_lines(0, start_line, end_line, false, lines)
+    else
+      vim.fn.setreg("s", open_char .. sel .. close_char, "c")
+      vim.cmd('normal! gv"sp')
+    end
     vim.fn.setreg("s", s, st)
+    vim.fn.setreg('"', u, ut)
   end
 end
 
@@ -77,10 +153,12 @@ map("n", "<S-l>", "<cmd>bnext<CR>", { desc = "Next Buffer Tab" })
 map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Close Current Buffer" })
 map("n", "<leader>ba", "<cmd>%bd|e#|bd#<CR>", { desc = "Close Other Buffers" })
 
--- 3. Terminal Toggle (VS Code Ctrl+~ / Ctrl+` / Ctrl+J hide/unhide)
+-- 3. Terminal Toggle (Ctrl+~, Ctrl+`, Ctrl+J, Ctrl+\, Space+tt)
 map({ "n", "t", "i" }, "<C-`>", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
 map({ "n", "t", "i" }, "<C-~>", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
-map({ "n", "t", "i" }, "<C-j>", function() Snacks.terminal() end, { desc = "Toggle Terminal (VS Code Ctrl+J)" })
+map({ "n", "t", "i" }, "<C-j>", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
+map({ "n", "t", "i" }, "<C-\\>", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
+map({ "n", "t", "i" }, "<leader>tt", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
 
 -- Window Split Navigation
 map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
@@ -88,8 +166,8 @@ map("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
 map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
 -- 4. Window Split Creation
-map("n", "<leader>sv", "<cmd>vsplit<CR>", { desc = "Split window vertically" })
-map("n", "<leader>sh", "<cmd>split<CR>", { desc = "Split window horizontally" })
+map("n", "<leader>sv", "<cmd>vsplit<CR>", { desc = "Split window side by side" })
+map("n", "<leader>sh", "<cmd>split<CR>", { desc = "Split window stacked" })
 map("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" })
 map("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" })
 
@@ -105,7 +183,7 @@ map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move line up" })
 map("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
 map("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
 
--- 7. Better Indentation in Visual Mode (Stays in visual selection)
+-- 7. Indentation in Visual Mode
 map("v", "<", "<gv", { desc = "Indent left and reselect" })
 map("v", ">", ">gv", { desc = "Indent right and reselect" })
 
@@ -114,10 +192,9 @@ map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics Flo
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous Diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next Diagnostic" })
 
--- 9. 1-Click Copy All Logs / Notifications to System Clipboard
+-- 9. Copy All Logs / Notifications to System Clipboard
 map("n", "<leader>nc", function()
   local lines = {}
-  -- 1. Grab Snacks Notifier history
   if _G.Snacks and Snacks.notifier and Snacks.notifier.get_history then
     for _, notif in ipairs(Snacks.notifier.get_history()) do
       local title = notif.title and ("[" .. notif.title .. "] ") or ""
@@ -127,7 +204,6 @@ map("n", "<leader>nc", function()
       end
     end
   end
-  -- 2. Grab standard Vim messages
   local msgs = vim.fn.execute("messages")
   if msgs and msgs ~= "" and msgs ~= "\n" then
     table.insert(lines, "\n--- Standard Messages ---")
@@ -136,18 +212,21 @@ map("n", "<leader>nc", function()
 
   local final_text = table.concat(lines, "\n"):gsub("^%s+", ""):gsub("%s+$", "")
   if final_text == "" then
-    vim.notify("ℹ️ No recent messages/logs found!", vim.log.levels.INFO)
+    vim.notify("No recent messages or logs found.", vim.log.levels.INFO)
     return
   end
   vim.fn.setreg("+", final_text)
   vim.fn.setreg('"', final_text)
-  vim.notify("📋 Copied " .. #lines .. " logs/notifications to clipboard!", vim.log.levels.INFO)
-end, { desc = "Copy all logs/notifications to clipboard" })
+  vim.notify("Copied " .. #lines .. " log entries to clipboard.", vim.log.levels.INFO)
+end, { desc = "Copy all logs and notifications to clipboard" })
 
--- 10. Fast Compile & Run Current File (<leader>r)
+-- 10. Compile & Run Current File (<leader>r and <F5>)
 local runner_term = nil
-map("n", "<leader>r", function()
-  -- 1. Format and Auto-save before compile & run
+local function compile_and_run()
+  if vim.fn.mode() == "i" then
+    vim.cmd("stopinsert")
+  end
+
   if vim.bo.modified or vim.fn.empty(vim.fn.expand("%")) == 0 then
     pcall(function()
       require("conform").format({ async = false, lsp_fallback = true })
@@ -159,44 +238,66 @@ map("n", "<leader>r", function()
   local file = vim.fn.expand("%:p")
   local dir = vim.fn.expand("%:p:h")
   local filename = vim.fn.expand("%:t")
-  local output = vim.fn.expand("%:p:r")
+  local tmp_bin = (vim.env.TMPDIR or "/tmp") .. "/bytec_nvim_bin"
 
   if file == "" then
-    vim.notify("⚠️ Save file first before running!", vim.log.levels.WARN)
+    vim.notify("Save file before running.", vim.log.levels.WARN)
     return
   end
 
-  local run_cmd = nil
+  local state_dir = vim.fn.expand("~/.bytec")
+  vim.fn.mkdir(state_dir, "p")
+  pcall(vim.fn.writefile, { file }, state_dir .. "/.last_file")
+
+  local compile_cmd = nil
+  local exec_cmd = nil
+
   if ft == "c" then
-    run_cmd = string.format("clang -Wall -Wextra -O2 -g %q -o %q -lm && %q", file, output, output)
+    compile_cmd = string.format("clang -Wall -Wextra -O2 -g %q -o %q -lm", file, tmp_bin)
+    exec_cmd = string.format("%q", tmp_bin)
   elseif ft == "cpp" then
-    run_cmd = string.format("clang++ -Wall -Wextra -O2 -g -std=c++20 %q -o %q && %q", file, output, output)
+    compile_cmd = string.format("clang++ -Wall -Wextra -O2 -g -std=c++20 %q -o %q", file, tmp_bin)
+    exec_cmd = string.format("%q", tmp_bin)
   elseif ft == "rust" then
-    run_cmd = string.format("rustc %q -o %q && %q", file, output, output)
-  elseif ft == "python" then
-    run_cmd = string.format("python3 %q", file)
-  elseif ft == "javascript" then
-    run_cmd = string.format("node %q", file)
-  elseif ft == "typescript" then
-    run_cmd = string.format("npx tsx %q", file)
-  elseif ft == "sh" or ft == "bash" then
-    run_cmd = string.format("bash %q", file)
+    compile_cmd = string.format("rustc %q -o %q", file, tmp_bin)
+    exec_cmd = string.format("%q", tmp_bin)
   elseif ft == "java" then
-    run_cmd = string.format("javac %q && java -cp %q %q", file, dir, vim.fn.expand("%:t:r"))
+    compile_cmd = string.format("javac %q", file)
+    exec_cmd = string.format("java -cp %q %q", dir, vim.fn.expand("%:t:r"))
+  elseif ft == "python" then
+    exec_cmd = string.format("python3 %q", file)
+  elseif ft == "javascript" then
+    exec_cmd = string.format("node %q", file)
+  elseif ft == "typescript" then
+    exec_cmd = string.format("npx tsx %q", file)
+  elseif ft == "sh" or ft == "bash" then
+    exec_cmd = string.format("bash %q", file)
   else
-    vim.notify("⚠️ No run command defined for filetype: " .. ft, vim.log.levels.WARN)
+    vim.notify("No run command defined for filetype: " .. ft, vim.log.levels.WARN)
     return
   end
 
-  -- Wrap command to display exit status and pause so output is visible
-  local full_cmd = string.format(
-    "cd %q && echo '⚡ Compiling & Running %s...' && %s; echo ''; echo '════════════════════════════════════════'; echo 'Finished with exit code '$?'. Press Enter to close...'; read",
-    dir,
-    filename,
-    run_cmd
-  )
+  local full_cmd
+  if compile_cmd then
+    full_cmd = string.format(
+      "cd %q && printf 'Compiling and running %s...\\n\\n' && if ! %s; then if command -v explain >/dev/null 2>&1; then explain %q; fi; printf '\\nPress Enter to return to editor...'; read -r _ </dev/tty; exit 1; fi; %s; code=$?; rm -f %q; if [ \"$code\" -eq 139 ]; then printf '\\n%s\\n'; elif [ \"$code\" -eq 136 ]; then printf '\\nCrash detected: Floating point exception (division by zero).\\n'; fi; printf '\\n════════════════════════════════════════\\nFinished with exit code %%s.\\nPress Enter to return to editor...' \"$code\"; read -r _ </dev/tty",
+      dir,
+      filename,
+      compile_cmd,
+      file,
+      exec_cmd,
+      tmp_bin,
+      "Crash detected: Segmentation fault (invalid memory or pointer access). Run: explain " .. filename
+    )
+  else
+    full_cmd = string.format(
+      "cd %q && printf 'Running %s...\\n\\n' && %s; code=$?; printf '\\n═══════════════════════════════════════\\nFinished with exit code %%s.\\nPress Enter to return to editor...' \"$code\"; read -r _ </dev/tty",
+      dir,
+      filename,
+      exec_cmd
+    )
+  end
 
-  -- Close prior runner terminal if open
   if runner_term and runner_term:buf_valid() then
     runner_term:close()
   end
@@ -207,9 +308,12 @@ map("n", "<leader>r", function()
       width = 0.98,
       height = 0.98,
       border = "rounded",
-      title = " 🚀 Run: " .. filename .. " ",
+      title = " Run: " .. filename .. " ",
       title_pos = "center",
     },
     interactive = true,
   })
-end, { desc = "Save, Compile & Run current file" })
+end
+
+map({ "n", "i" }, "<leader>r", compile_and_run, { desc = "Save, Compile & Run current file" })
+map({ "n", "i" }, "<F5>", compile_and_run, { desc = "Save, Compile & Run current file" })

@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 🎨 UI AESTHETICS, THEME, STATUSLINE & BUFFERLINE
+-- UI AESTHETICS, THEME, STATUSLINE & BUFFERLINE
 -- ==============================================================================
 
 return {
@@ -31,7 +31,7 @@ return {
     end,
   },
 
-  -- 2. Sleek Mini Icons (Fast & lightweight)
+  -- 2. Mini Icons
   {
     "echasnovski/mini.icons",
     lazy = false,
@@ -39,7 +39,7 @@ return {
     opts = {},
   },
 
-  -- 3. Top Browser-like Buffer Tabs (Bufferline)
+  -- 3. Top Buffer Tabs (Bufferline)
   {
     "akinsho/bufferline.nvim",
     event = "VeryLazy",
@@ -56,7 +56,7 @@ return {
         offsets = {
           {
             filetype = "snacks_layout_box",
-            text = "📁 Explorer",
+            text = "Explorer",
             highlight = "Directory",
             text_align = "center",
           },
@@ -65,7 +65,7 @@ return {
     },
   },
 
-  -- 4. Bottom Modern Glowing Statusline (Lualine)
+  -- 4. Bottom Statusline (Lualine)
   {
     "nvim-lualine/lualine.nvim",
     event = "VeryLazy",
@@ -78,7 +78,28 @@ return {
         section_separators = { left = "", right = "" },
       },
       sections = {
-        lualine_a = { { "mode", icon = "⚡" } },
+        lualine_a = {
+          {
+            "mode",
+            fmt = function(str)
+              if str == "NORMAL" then
+                return "NORMAL (Press i to type)"
+              elseif str == "INSERT" then
+                return "INSERT (Typing)"
+              elseif
+                str == "VISUAL"
+                or str == "V-LINE"
+                or str == "V-BLOCK"
+                or str == "SELECT"
+                or str == "S-LINE"
+                or str == "S-BLOCK"
+              then
+                return "VISUAL (Selected)"
+              end
+              return str
+            end,
+          },
+        },
         lualine_b = { { "branch", icon = "" }, "diff" },
         lualine_c = {
           {
@@ -89,12 +110,12 @@ return {
         },
         lualine_x = { "encoding", "fileformat", "filetype" },
         lualine_y = { "progress" },
-        lualine_z = { { "location", icon = "📍" } },
+        lualine_z = { { "location" } },
       },
     },
   },
 
-  -- 5. Interactive Keymap Assistant (Which-Key v3)
+  -- 5. Keymap Assistant (Which-Key v3)
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -104,13 +125,13 @@ return {
         border = "rounded",
       },
       spec = {
-        { "<leader>f", group = "🔍 Find / Search" },
-        { "<leader>b", group = "📑 Buffers" },
-        { "<leader>s", group = "🪟 Window Splits" },
-        { "<leader>c", group = "💡 Code / LSP" },
-        { "<leader>g", group = "🐙 Git Tools" },
-        { "<leader>t", group = "💻 Terminal" },
-        { "<leader>n", group = "🔔 Notifications / Logs" },
+        { "<leader>f", group = "Find / Search" },
+        { "<leader>b", group = "Buffers" },
+        { "<leader>s", group = "Window Splits" },
+        { "<leader>c", group = "Code / LSP" },
+        { "<leader>g", group = "Git Tools" },
+        { "<leader>t", group = "Terminal" },
+        { "<leader>n", group = "Notifications / Logs" },
       },
     },
   },

@@ -1,14 +1,14 @@
 -- ==============================================================================
--- ⚙️ CORE OPTIONS & SETTINGS (DAEMON OS OLED STACK)
+-- CORE OPTIONS & SETTINGS (BYTEC STUDIO v2.0)
 -- ==============================================================================
 
 local opt = vim.opt
 
--- Line Numbers (Standard absolute numbering like VS Code)
+-- Line Numbers (Absolute numbering like VS Code)
 opt.number = true
 opt.relativenumber = false
 
--- Tabs & Indentation (Modern standard: 2 spaces)
+-- Tabs & Indentation
 opt.tabstop = 2
 opt.shiftwidth = 2
 opt.softtabstop = 2
@@ -20,17 +20,44 @@ opt.smartindent = false
 opt.termguicolors = true
 opt.cursorline = true
 opt.signcolumn = "yes"
-opt.pumheight = 10 -- Pop-up menu height
-opt.showmode = false -- Lualine already displays mode
-opt.wrap = false -- No line wrap by default
-opt.scrolloff = 8 -- Keep 8 lines visible above/below cursor
+opt.pumheight = 10
+opt.showmode = false
+opt.wrap = false
+opt.scrolloff = 8
 opt.sidescrolloff = 8
 
--- Mouse & Clipboard
-opt.mouse = "a" -- Full mouse support (click tabs, scroll, select text)
-opt.clipboard = "unnamedplus" -- System clipboard sync (wl-clipboard on Wayland)
+-- Mouse, Shift+Arrow Selection & Clipboard
+opt.mouse = "a"
+opt.keymodel = "startsel,stopsel"
+opt.selectmode = "mouse,key"
 
--- Cursor Line Wrapping (Left arrow at start of line wraps to previous line, Right arrow at end wraps to next line)
+local termux_set = vim.fn.executable("termux-clipboard-set") == 1 and "termux-clipboard-set"
+  or (vim.fn.executable("/data/data/com.termux/files/usr/bin/termux-clipboard-set") == 1
+    and "/data/data/com.termux/files/usr/bin/termux-clipboard-set")
+  or nil
+local termux_get = vim.fn.executable("termux-clipboard-get") == 1 and "termux-clipboard-get"
+  or (vim.fn.executable("/data/data/com.termux/files/usr/bin/termux-clipboard-get") == 1
+    and "/data/data/com.termux/files/usr/bin/termux-clipboard-get")
+  or nil
+
+if termux_set and termux_get then
+  vim.g.clipboard = {
+    name = "termux",
+    copy = {
+      ["+"] = termux_set,
+      ["*"] = termux_set,
+    },
+    paste = {
+      ["+"] = termux_get,
+      ["*"] = termux_get,
+    },
+    cache_enabled = 0,
+  }
+end
+
+opt.clipboard = "unnamedplus"
+
+-- Cursor Line Wrapping
 opt.whichwrap = "b,s,<,>,[,],h,l"
 
 -- Search & Patterns
@@ -44,23 +71,23 @@ opt.splitbelow = true
 opt.splitright = true
 
 -- Performance, Undo & Backups
-opt.undofile = true -- Persistent undo history across file edits
+opt.undofile = true
 opt.swapfile = false
 opt.backup = false
-opt.updatetime = 200 -- Fast update for diagnostics & gitsigns (200ms)
-opt.timeoutlen = 300 -- Fast which-key popup trigger (300ms)
+opt.updatetime = 200
+opt.timeoutlen = 300
 
 -- Completion popup behavior
 opt.completeopt = { "menu", "menuone", "noselect" }
 
--- Disable unused providers to avoid warning logs
+-- Disable unused providers
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
--- Global C-style Indentation (p0 prevents indentation after function declarations / parentheses)
+-- Global C-style Indentation (p0 prevents indentation after function declarations)
 opt.cinoptions = "g0,:0,N-s,(0,W4,m1,j1,{0,f0,t0,p0"
 
--- C & C++ Specific Indentation & Format Rules
+-- C & C++ Indentation & Format Rules
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "c", "cpp", "objc", "objcpp" },
   callback = function()
